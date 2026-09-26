@@ -1,204 +1,164 @@
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{UConnLH}[2017/10/20 Univ of Connecticut, Statistics, letterhead]
-% \ProvidesClass{UConnLH}[2008/01/26 Univ of Connecticut, Statistics, letterhead]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% UConnLH.cls                                           %
-% Author    Jun Yan adapted from UIlh.cls by Russ Lenth %
-% Version   2.0  October 20, 2017                       %
-% Version   1.0  January 26, 2008                       %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Changes in Version 2.0: UConn has a new logo
-
-%%% Root name of masthead graphic file
-% \newcommand{\UConnLogo}{UConnStatTop} % File name for UConnStat logo PostScript file
-\newcommand{\UConnLogo}{UConn-stacked} % File name for UConn logo
-% \newcommand{\UConnStatFoot}{UConnStatLowerLeft} 
-
-%%% Options
-\newcommand{\@sigpic}{} % default signature "graphic"
-\newcommand{\@sigput}{\put(0,0)} % signature location in inches
-\DeclareOption{signed}{
-  \renewcommand{\@sigpic}{\put(8,-0.55){\includegraphics[height=1cm]{\SigPic}}}
-  \renewcommand{\@sigput}{\SigPut}}
-\DeclareOption{initialed}{
-  \renewcommand{\@sigpic}{\includegraphics{\InitPic}}
-  \renewcommand{\@sigput}{\InitPut}}
-\DeclareOption{firstname}{
-  \renewcommand{\@sigpic}{\includegraphics{\NickPic}}
-  \renewcommand{\@sigput}{\NickPut}}
+\NeedsTeXFormat{LaTeX2e}[2020/10/01]
+\ProvidesClass{UConnLH}[2026/09/26 v3.0 UConn Statistics letterhead]
+% Jun Yan; adapted originally from UIlh.cls by Russ Lenth.
+% Version 3 replaces coordinate-based layout with measured, flowing boxes.
+\newif\ifUConnLH@signed
+\newif\ifUConnLH@head
+\newif\ifUConnLH@foot
+\UConnLH@headtrue
+\newcount\UConnLH@sigoptions
+\def\UConnLH@sigmode{signature}
+\DeclareOption{signed}{\UConnLH@signedtrue\advance\UConnLH@sigoptions by 1}
+\DeclareOption{initialed}{\UConnLH@signedtrue\def\UConnLH@sigmode{initials}\advance\UConnLH@sigoptions by 1}
+\DeclareOption{firstname}{\UConnLH@signedtrue\def\UConnLH@sigmode{firstname}\advance\UConnLH@sigoptions by 1}
+\DeclareOption{nohead}{\UConnLH@headfalse}
+\DeclareOption{footer}{\UConnLH@foottrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\PassOptionsToClass{letterpaper,11pt}{article}
 \ProcessOptions\relax
-
-%%% Use article as base class (with any leftover options)
+\ifnum\UConnLH@sigoptions>1
+  \ClassError{UConnLH}{Conflicting signature options}{Choose only one of signed, initialed, or firstname.}
+\fi
 \LoadClass{article}
+\RequirePackage[T1]{fontenc}
 \RequirePackage{bookman}
 \RequirePackage{graphicx}
-\RequirePackage{ifthen}
+\RequirePackage{geometry}
+\RequirePackage{fancyhdr}
+\RequirePackage{keyval}
+\geometry{left=1in,right=1in,top=.75in,bottom=.85in,headheight=14pt,headsep=.2in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{.65\baselineskip plus 1pt}
+\AtBeginDocument{\raggedright}
 
-%%% Fonts
-\DeclareFixedFont{\footfont}{OT1}{phv}{m}{n}{7}
-\newcommand{\memofont}{\large\sc}
-
-%%% Fancy hack to put extra space between characters
-%%% Usage: \extend{STRING TO BE STRETCHED}
-\def\@mygap{\rule{.5pt}{0pt}}
-\def\extend#1{\@extend#1~}
-\def\@extend#1{\@ifnextchar~{#1}{#1\@mygap\@extend}}
-
-%%% Macros to allow for blocking of masthead or footer
-\def\noHead{\gdef\@usehead{0}}
-\def\noFoot{\gdef\@usefoot{0}}
-\def\@usehead{1}
-%\def\@usefoot{1}
-\def\@usefoot{0}
-
-%%% Internal macros to be used later
-\newcommand{\@signature}{\parbox{8cm}{\me\\*\mytitle}}
-\renewcommand{\to}[2]{\def\@to{#1}\def\@toaddr{#2}}
-\to{~}{~}   %%% initialize, just in case
-
-\def\@putSig{\begin{picture}(0,0)\@sigput{\@sigpic}\end{picture}}
-
-\clearpage\raggedright%
-\setlength{\parindent}{0pt}%
-\setlength{\parskip}{8pt}%
-\setlength{\oddsidemargin}{0in}%
-\setlength{\evensidemargin}{\oddsidemargin}%
-\setlength{\textwidth}{6.75in}%
-\setlength{\topmargin}{-.5in}%{0pt}%
-\setlength{\headheight}{12pt}%
-\setlength{\headsep}{24pt}%
-\setlength{\footskip}{25pt}%
-\setlength{\textheight}{9.5in}%{8.75in}%
-\large\normalsize
-  
-\newlength{\@part@skip}
-\setlength{\@part@skip}{1\parskip plus .5\parskip minus \parskip}
-
-% \setlength{\unitlength}{1in}%%% for picture environments
-\setlength{\unitlength}{1cm}%%% for picture environments
-
-%%% This macro initializes the page parameters and
-%%% draws the letterhead.  
-%%% The argument is what is put under the gold bar
-\newcommand{\makeLetterhead}[1]{%
-  \clearpage
-  \thispagestyle{empty}\setcounter{page}{1}%
-%  \begin{picture}(3,1.0)%%%(3,.5)%
-  \begin{picture}(15, 2.8)%
-%     \put(0,0){#1}
-%     \ifthenelse{\@usehead = 1}{\put(-.325,.335){\includegraphics{\UIlogo}}}{}
-%     \ifthenelse{\@usefoot = 1}{\put(4.5,-8.5){\@myfoot}}{}
-    \put(0,0){#1}
-    \ifthenelse{\@usehead = 1}{\put(0, 2.5){\includegraphics[width=6cm]{\UConnLogo}}}{}%
-    \ifthenelse{\@usehead = 1}{\put(13.5, 3){\@myfoot}}{}%
-    \ifthenelse{\@usefoot = 1}{\put(13.5, -22){\@myfoot}}{}%
-    \ifthenelse{\@usefoot = 1}{\put(-1.8,-22){\includegraphics[width=5cm]{\UConnStatFoot}}}{}%
-  \end{picture}
-  \enlargethispage{-.5in}}
-
-%%% Opening of the letter
-\newcommand{\opening}[1]{%
-  \makeLetterhead{\today}%
-  \vspace{\parskip}\vfill 
-  % \vspace{\parskip}\vspace{4pt}
-  {\raggedright \@to \\ \@toaddr}\par%%% \\*[\@part@skip]
-  {\def\\{\noexpand\\}\def~{\noexpand~}\def\emph{\noexpand\emph}%
-     \def\em{\noexpand\em}\def\bf{\noexpand\bf}%
-     \immediate\write12{\noexpand\envelope|\@to \\ 
-     \@toaddr|Russell V.~Lenth|}}%%%%%% (Put entry in the envelope file)
-  \markright{{\@to: \today}}
-  #1\par\nobreak}
-
-%%% Closing of the letter
-\newcommand{\closing}[1][\hspace{8cm}\sincerely]{%
-    \vspace{\@part@skip}\par \nobreak 
-    \hspace{8cm} 
-    \parbox{.95\textwidth}{%
-    \@putSig%
-    #1,\vspace{.55in} 
-
-    \hspace{8cm}\@signature}\vfill\vfill}
-
-
-%%% \memo{TO}{FROM}{TOPIC} %%%
-%%% Note the custom macro \me (see above) is handy for the FROM argument
-\newcommand{\memo}[3]{%
-    \to{Memorandum}{}%
-    \makeLetterhead{{\memofont Memorandum}}%
-    \vspace{\parskip}\par
-    \markright{{{\sc Memorandum} to #1: \today}}
-    {\raggedright
-        \begin{picture}(0,0)\put(2.5,-.4){\@sigpic}\end{picture}%
-        \makebox[.65in][l]{To:}\parbox[t]{5in}{#1}\\[8pt] 
-        \makebox[.65in][l]{From:}\parbox[t]{5in}{#2}\\[8pt] 
-        \makebox[.65in][l]{Date:}\today\\[8pt] 
-        \makebox[.65in][l]{Topic:}\parbox[t]{5in}{#3}\vspace{\parskip}%
-            \par\nobreak}}
-    
-%%% \fax{TO}{FROM}{TOPIC}{FAX NO}{PAGES}
-\newcommand{\fax}[5]{%
-  \makeLetterhead{{\memofont FAX Transmission for #1}}
-    \vspace{\parskip}\par
-    \markright{{{\sc FAX transmission} for #1: \today}}
-    {\raggedright 
-        {\bf Number of pages (including this sheet):\quad#5}\\
-        If there are problems with this transmission, 
-        please call \me, \phone
-               
-        \begin{picture}(0,0)\put(2.5,-.7){\@sigpic}\end{picture}%
-        \makebox[1in][l]{To:}#1\\[8pt] 
-        \makebox[1in][l]{FAX no.:}#4\\[8pt]
-        \makebox[1in][l]{From:}#2\\[8pt] 
-        \makebox[1in][l]{Date:}\today\\[8pt] 
-        \makebox[1in][l]{Topic:}#3\vspace{\parskip}%
-        \par\nobreak}}
-
-
-%%% Commands for CCs and enclosures.  
-%%% \encl generalizes, as can be seen in def of \cc
-\newcommand{\encl}[2][encl:]{\par\nobreak\makebox[.5in][l]%
-    {#1}\parbox[t]{6in}{#2}}
-\newcommand{\cc}[1]{\encl[cc:]{#1}}
-
-%%% The page style for subsequent pages
-%%% (note that \opening and \memo set \thispagestyle{empty})
-\pagestyle{myheadings}
-
-%%% Needed information
-%%% Customize in letterinfo.sty
+% Public fields retain the original commands for existing letters.
+\newcommand{\me}{}
+\newcommand{\mytitle}{}
+\newcommand{\phone}{}
 \newcommand{\sincerely}{Sincerely yours}
-\newcommand{\me}{Jun Yan}
-\newcommand{\mytitle}{itle}
-\newcommand{\phone}{860-486-3416}
+\newcommand{\UConnLogo}{UConn-stacked.png}
+\def\UConnLH@department{Department of Statistics}
+\def\UConnLH@address{}
+\def\UConnLH@email{}
+\def\UConnLH@website{}
+\def\UConnLH@date{\today}
+\def\UConnLH@signature{}
+\def\UConnLH@initials{}
+\def\UConnLH@firstname{}
+\newlength{\UConnLH@logowidth}
+\setlength{\UConnLH@logowidth}{2.4in}
+\newlength{\UConnLH@sigheight}
+\setlength{\UConnLH@sigheight}{1cm}
+\newlength{\UConnLH@closingwidth}
+\setlength{\UConnLH@closingwidth}{.45\textwidth}
+\newcommand{\extend}[1]{#1} % Compatibility; no artificial letter spacing.
 \newcommand{\personal}{%
-    \extend{Jun\ Yan}\\
-    \extend{326\ CLAS\ }\\
-    \extend{860-486-3416}\\
-    \extend{jun.yan@uconn.edu}\\
-    \extend{http://www.stat.uconn.edu/~jyan/}}
+  \UConnLH@department
+  \ifx\me\@empty\else\\\me\fi
+  \ifx\mytitle\@empty\else\\\mytitle\fi
+  \ifx\UConnLH@address\@empty\else\\\UConnLH@address\fi
+  \ifx\phone\@empty\else\\\phone\fi
+  \ifx\UConnLH@email\@empty\else\\\UConnLH@email\fi
+  \ifx\UConnLH@website\@empty\else\\\UConnLH@website\fi}
+\define@key{UConnLH}{name}{\renewcommand{\me}{#1}}
+\define@key{UConnLH}{title}{\renewcommand{\mytitle}{#1}}
+\define@key{UConnLH}{phone}{\renewcommand{\phone}{#1}}
+\define@key{UConnLH}{department}{\def\UConnLH@department{#1}}
+\define@key{UConnLH}{address}{\def\UConnLH@address{#1}}
+\define@key{UConnLH}{email}{\def\UConnLH@email{#1}}
+\define@key{UConnLH}{website}{\def\UConnLH@website{#1}}
+\define@key{UConnLH}{date}{\def\UConnLH@date{#1}}
+\define@key{UConnLH}{signature}{\def\UConnLH@signature{#1}}
+\define@key{UConnLH}{initials}{\def\UConnLH@initials{#1}}
+\define@key{UConnLH}{firstname}{\def\UConnLH@firstname{#1}}
+\define@key{UConnLH}{logo}{\renewcommand{\UConnLogo}{#1}}
+\define@key{UConnLH}{logo-width}{\setlength{\UConnLH@logowidth}{#1}}
+\define@key{UConnLH}{signature-height}{\setlength{\UConnLH@sigheight}{#1}}
+\define@key{UConnLH}{closing-width}{\setlength{\UConnLH@closingwidth}{#1}}
+\define@key{UConnLH}{closing}{\renewcommand{\sincerely}{#1}}
+\newcommand{\UConnLHsetup}[1]{\setkeys{UConnLH}{#1}}
+% Load only the working-directory profile, never an unrelated TeX installation file.
+\InputIfFileExists{./letterinfo.sty}{}{}
+\providecommand{\SigPic}{}
+\providecommand{\InitPic}{}
+\providecommand{\NickPic}{}
+\newcommand{\noHead}{\UConnLH@headfalse}
+\newcommand{\noFoot}{\UConnLH@footfalse}
 
-%%% Read personal information
-\InputIfFileExists{letterinfo.sty}{}{%
-    \ClassWarningNoLine{UConnLH}{%
-        No letterinfo.sty file found. \MessageBreak
-        \space \space No personal information will be
-        included in the letterhead.
-    }
-}
+% A separate recipient label avoids multiline addresses in running headers.
+\def\UConnLH@recipient{}
+\def\UConnLH@organization{}
+\renewcommand{\to}[2]{\def\UConnLH@organization{#1}\def\UConnLH@recipient{#2}}
+\fancypagestyle{UConnLH}{%
+  \fancyhf{}
+  \fancyhead[L]{\small\me}
+  \fancyhead[R]{\small\UConnLH@date}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}}
+\fancypagestyle{UConnLHfirst}{%
+  \fancyhf{}
+  \fancyfoot[C]{\ifUConnLH@foot\small\UConnLH@department\fi}
+  \renewcommand{\headrulewidth}{0pt}}
+\pagestyle{UConnLH}
 
-%%% Set up footer
-\newcommand{\@footinfo}{{\footfont\def\arraystretch{.667}%
-  \begin{tabular}[b]{@{}l@{}}\personal\end{tabular}}}
-\newlength{\@footht}
-\settoheight{\@footht}{\@footinfo}
-\addtolength{\@footht}{-1.5pt}
-\newcommand{\@myfoot}{\rule{2.8pt}{\@footht}\hspace{.125in}\@footinfo}
+\newcommand{\makeLetterhead}[1]{%
+  \clearpage\setcounter{page}{1}\thispagestyle{UConnLHfirst}%
+  \ifUConnLH@head
+    \noindent\begin{minipage}[t]{.53\textwidth}
+      \vspace{0pt}%
+      \IfFileExists{\UConnLogo}{\includegraphics[width=\UConnLH@logowidth]{\UConnLogo}}{%
+        \ClassError{UConnLH}{Logo file '\UConnLogo' not found}{Set logo to an existing image with \string\UConnLHsetup.}}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{.43\textwidth}
+      \vspace{0pt}\raggedright\sffamily\fontsize{9}{11}\selectfont\personal
+    \end{minipage}\par\vspace{.4in}%
+  \fi
+  #1\par\vspace{.25in}}
+\newcommand{\opening}[1]{%
+  \makeLetterhead{\UConnLH@date}%
+  \ifx\UConnLH@recipient\@empty\else\UConnLH@recipient\par\nopagebreak\fi
+  \ifx\UConnLH@organization\@empty\else
+    {\setlength{\parskip}{0pt}\UConnLH@organization\par}\nopagebreak
+  \fi
+  \vspace{.5\baselineskip}#1\par\nobreak}
 
-
-
-%%% Set up envelope file
-%\AtBeginDocument{\immediate\openout 12 = /tmp/envelope.data}
-%\AtEndDocument{\closeout 12}
-
+% Graphics are resolved only when needed; legacy extensionless names work.
+\newcommand{\UConnLH@insertSignature}{%
+  \edef\UConnLH@image{\csname UConnLH@\UConnLH@sigmode\endcsname}%
+  \ifx\UConnLH@image\@empty
+    \def\UConnLH@signaturemode{signature}\def\UConnLH@initialsmode{initials}%
+    \ifx\UConnLH@sigmode\UConnLH@signaturemode\edef\UConnLH@image{\SigPic}%
+    \else\ifx\UConnLH@sigmode\UConnLH@initialsmode\edef\UConnLH@image{\InitPic}%
+    \else\edef\UConnLH@image{\NickPic}\fi\fi
+  \fi
+  \ifx\UConnLH@image\@empty
+    \ClassError{UConnLH}{No signature image configured}{Set signature, initials, or firstname with \string\UConnLHsetup, or remove the signature option.}%
+  \else
+    \includegraphics[height=\UConnLH@sigheight,width=\linewidth,keepaspectratio]{\UConnLH@image}%
+  \fi}
+\newcommand{\closing}[1][\sincerely]{%
+  \par\addvspace{\baselineskip}\noindent\hfill
+  \begin{minipage}{\UConnLH@closingwidth}
+    \raggedright #1,\par\smallskip
+    \ifUConnLH@signed\UConnLH@insertSignature\par\smallskip
+    \else\vspace{.45in}\fi
+    \ifx\me\@empty
+      \ClassWarning{UConnLH}{Sender name is empty; set name with \string\UConnLHsetup}%
+    \else\me\fi
+    \ifx\mytitle\@empty\else\\\mytitle\fi
+  \end{minipage}\par}
+\newcommand{\encl}[2][Encl:]{\par\addvspace{\baselineskip}%
+  \noindent\begin{tabular}{@{}l@{\quad}p{.8\linewidth}@{}}#1&#2\end{tabular}\par}
+\newcommand{\cc}[1]{\encl[cc:]{#1}}
+\newcommand{\memo}[3]{%
+  \makeLetterhead{\textbf{Memorandum}}%
+  \begin{tabular}{@{}l@{\quad}p{.8\linewidth}@{}}
+    To:&#1\\From:&#2\\Date:&\UConnLH@date\\Subject:&#3
+  \end{tabular}\par\addvspace{\baselineskip}}
+\newcommand{\fax}[5]{%
+  \makeLetterhead{\textbf{Fax transmission}}%
+  \begin{tabular}{@{}l@{\quad}p{.7\linewidth}@{}}
+    To:&#1\\From:&#2\\Date:&\UConnLH@date\\Subject:&#3\\Fax:&#4\\Pages:&#5
+  \end{tabular}\par
+  If there are problems with this transmission, please call \me\ at \phone.\par}
+\endinput
