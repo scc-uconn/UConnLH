@@ -1,0 +1,22 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.dvi
+*.xdv
+*.bak
+
+# Generated letters; retain the original sample preview
+*.pdf
+!SampleLetter.pdf
+
+# Local system/editor files
+.DS_Store
+*~
+*.swp
