@@ -12,9 +12,10 @@
 *.xdv
 *.bak
 
-# Generated letters; retain the original sample preview
+# Generated letters; retain the letter and memo previews
 *.pdf
 !SampleLetter.pdf
+!SampleMemo.pdf
 
 # Local system/editor files
 .DS_Store
