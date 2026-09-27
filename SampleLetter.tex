@@ -1,5 +1,17 @@
 \documentclass[signed]{UConnLH}
 
+% Personalize the sender here; no separate setup file is required.
+\UConnLHsetup{
+  name = {Jun Yan},
+  title = {Professor},
+  department = {Department of Statistics},
+  address = {215 Glenbrook Rd., U-4120\\Storrs, CT 06269-4120},
+  phone = {(860) 486-3416},
+  email = {jun.yan@uconn.edu},
+  website = {statcomp.org},
+  signature = {sampleSig.png}
+}
+
 \begin{document}
 \to{Department of Statistics\\University of Connecticut}{Dr. Yuwen Gu}
 \opening{Dear Yuwen:}
@@ -8,9 +20,9 @@ This example demonstrates the UConn Department of Statistics letterhead.
 The logo and sender information form the masthead, while the recipient,
 salutation, body, and closing follow in a consistent layout.
 
-To write your own letter, edit the sender profile in \texttt{letterinfo.sty}
-and replace the recipient and body in this file. You can also override
-individual settings in the preamble with \texttt{\string\UConnLHsetup}.
+To write your own letter, edit the sender settings in
+\texttt{\string\UConnLHsetup} at the top of this file, then replace the
+recipient and body. No separate sender setup file is required.
 
 Compile the letter with \texttt{pdflatex SampleLetter.tex}. The
 \texttt{signed} option includes your configured signature image; remove
