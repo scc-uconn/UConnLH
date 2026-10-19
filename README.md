@@ -88,7 +88,7 @@ this settings template. Image paths are relative to the compilation directory.
 | `masthead-overhang` | `0.35in` into each side margin |
 | `masthead-lift` | `0.5in` upward into the top margin |
 | `sender-width` | `2in`; increasing it expands the block leftward |
-| `sender-xshift` | `-0.15in`; negative moves left, positive moves right |
+| `sender-xshift` | `0in`; negative moves left, positive moves right |
 | `sender-yshift` | `0in`: sender and logo share a horizontal centerline; positive moves up, negative moves down |
 | `sender-font-size` | `7` points, in Helvetica; supply a number without units |
 | `date-gap` | `0.3in` below the masthead |
@@ -104,9 +104,12 @@ text. Its sender block is 2 inches wide; longer fields wrap within that block.
 The sender uses the original Helvetica font at 7 points, without artificial
 letter spacing. Sender width and horizontal position can be adjusted independently
 of the logo, and `date-gap` controls the space below the masthead.
-The sender block is measured after text wrapping and vertically centered against
-the logo. Fewer rows shrink it around that centerline; additional rows expand it
-above and below. Omitting the website therefore adjusts placement automatically.
+The sender details are right aligned, with the vertical rule at the block's left
+edge. By default, the sender block's right edge mirrors the logo's left edge
+across the page. The sender block is measured after text wrapping and vertically
+centered against the logo. Fewer rows shrink it around that centerline; additional
+rows expand it above and below. Omitting the website therefore adjusts placement
+automatically.
 
 ## Options and other commands
 

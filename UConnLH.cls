@@ -59,7 +59,7 @@
 \newlength{\UConnLH@senderwidth}
 \setlength{\UConnLH@senderwidth}{2in}
 \newlength{\UConnLH@senderxshift}
-\setlength{\UConnLH@senderxshift}{-.15in}
+\setlength{\UConnLH@senderxshift}{0in}
 \newlength{\UConnLH@senderyshift}
 \setlength{\UConnLH@senderyshift}{0in}
 \newlength{\UConnLH@dategap}
@@ -143,21 +143,20 @@
     \begin{minipage}[t]{\UConnLH@senderwidth}
       \vspace{0pt}%
       \sbox{\UConnLH@contactbox}{%
-        \begin{minipage}[t]{\linewidth}
-          \raggedright\fontfamily{phv}%
+        \begin{minipage}[t]{\dimexpr\linewidth-.125in-2.8pt\relax}
+          \raggedleft\fontfamily{phv}%
           \fontsize{\UConnLH@senderfontsize}{\fpeval{1.2*\UConnLH@senderfontsize}}\selectfont\personal
         \end{minipage}}%
-      % The rule occupies the gap to the left, keeping the text position fixed.
+      % Right-align the sender details and place the rule at the block's left edge.
       % Align vertical centers after wrapping, then apply an optional offset.
       \setlength{\UConnLH@senderraise}{\dimexpr
         .5\dp\UConnLH@contactbox-.5\ht\UConnLH@logobox-.5\dp\UConnLH@logobox
         +\UConnLH@senderyshift\relax}%
       \raisebox{\UConnLH@senderraise}[0pt][%
         \dimexpr\dp\UConnLH@contactbox-\UConnLH@senderraise\relax]{%
-      \makebox[0pt][r]{%
-        \rule[-\dp\UConnLH@contactbox]{2.8pt}{%
-          \dimexpr\ht\UConnLH@contactbox+\dp\UConnLH@contactbox\relax}%
-        \hspace{.125in}}%
+      \rule[-\dp\UConnLH@contactbox]{2.8pt}{%
+        \dimexpr\ht\UConnLH@contactbox+\dp\UConnLH@contactbox\relax}%
+      \hspace{.125in}%
       \usebox{\UConnLH@contactbox}}%
     \end{minipage}\hspace*{-\UConnLH@senderxshift}%
     \end{minipage}}\par
